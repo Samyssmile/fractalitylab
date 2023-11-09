@@ -2,8 +2,6 @@ package de.fractalitylab.generators;
 
 import de.fractalitylab.data.ImageWriter;
 import de.fractalitylab.data.DataElement;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.awt.*;
 import java.util.List;
@@ -11,23 +9,31 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.logging.Logger;
 import java.util.stream.IntStream;
 
 public class BurningShipGenerator implements ImageGenerator{
-    private static final Logger LOGGER = LogManager.getLogger(BurningShipGenerator.class);
+    private static final Logger LOGGER = Logger.getLogger(BurningShipGenerator.class.getName());
+
     private final ThreadLocalRandom random = ThreadLocalRandom.current();
 
     @Override
     public List<DataElement> generateImage(int width, int height, int maxIterations, int numberOfImages) {
         List<DataElement> result = new ArrayList<>();
-        IntStream.range(1, numberOfImages + 1).parallel().forEach(imageNumber -> {
-            LOGGER.info("Generating Burning Ship image " + imageNumber + "...");
-            BufferedImage image = generateSingleImage(width, height, maxIterations*10 );
+        IntStream.range(1, numberOfImages + 1).forEach(imageNumber -> {
+            BufferedImage image;
+            do {
+            image = generateSingleImage(width, height, maxIterations*10 );
+
+            } while (!checkBlackImage(image)); // Retry if the image is predominantly black
+
+
 
             UUID uuid = UUID.randomUUID();
             ImageWriter.writeImage("burningship", uuid.toString(), image);
             result.add(new DataElement(uuid.toString(), "burningship"));
         });
+        LOGGER.info("BurningShip generation finished.");
         return result;
     }
 
@@ -81,6 +87,23 @@ public class BurningShipGenerator implements ImageGenerator{
             }
         });
         return image;
+    }
+
+    // Add this method to your BurningShipGenerator class
+    private boolean checkBlackImage(BufferedImage image) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+        int[] pixels = new int[width * height];
+        image.getRGB(0, 0, width, height, pixels, 0, width);
+
+        int blackPixelThreshold = (int) (width * height * 0.93);
+        long blackPixelCount = IntStream.of(pixels).parallel().filter(color -> color == Color.BLACK.getRGB()).count();
+
+        boolean isBlack = blackPixelCount < blackPixelThreshold;
+        if (!isBlack) {
+            LOGGER.info("Image is predominantly black. Retrying...");
+        }
+        return isBlack;
     }
 
     private double[] rotatePoint(double x, double y, double angle) {

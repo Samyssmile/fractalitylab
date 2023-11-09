@@ -1,5 +1,6 @@
 package de.fractalitylab.generators;
 
+import de.fractalitylab.FractalityLab;
 import de.fractalitylab.data.ImageWriter;
 import de.fractalitylab.data.DataElement;
 
@@ -9,8 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 public class TricornGenerator implements ImageGenerator {
+    private static final Logger LOGGER = Logger.getLogger(TricornGenerator.class.getName());
     private Random random = new Random();
 
     @Override
@@ -38,6 +41,7 @@ public class TricornGenerator implements ImageGenerator {
             ImageWriter.writeImage("tricorn", uuid.toString(), image);
             dataElements.add(new DataElement(uuid.toString(), "tricorn"));
         }
+        LOGGER.info("Tricorn generation finished.");
         return dataElements;
     }
 

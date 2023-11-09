@@ -1,2 +1,2 @@
-rootProject.name = "MandelbrotGan"
+rootProject.name = "FractalityLab"
 

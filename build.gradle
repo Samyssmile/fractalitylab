@@ -11,6 +11,15 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
 }
 
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'de.fractalitylab.FractalityLab'
+        )
+    }
+}
+
+
 repositories {
     mavenCentral()
 }

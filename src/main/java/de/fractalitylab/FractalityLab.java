@@ -21,11 +21,12 @@ public class FractalityLab {
         config = parseArguments(args);
 
         ImageGenerator[] imageGenerators = {
+                new TricornGenerator(),
                 new MandelbrotGenerator(),
                 new JuliaGenerator(),
                 new BurningShipGenerator(),
-                new TricornGenerator(),
-                new SierpinskiGasketGenerator()
+                new SierpinskiGasketGenerator(),
+                new NewtonFractalGenerator(),
         };
 
         List<DataElement> allDataElements = generateAllDataElements(imageGenerators);

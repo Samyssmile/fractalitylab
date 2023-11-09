@@ -9,9 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 public class SierpinskiGasketGenerator implements ImageGenerator {
-
+    private static final Logger LOGGER = Logger.getLogger(SierpinskiGasketGenerator.class.getName());
     private final Random rand = new Random();
 
     @Override
@@ -40,6 +41,9 @@ public class SierpinskiGasketGenerator implements ImageGenerator {
             ImageWriter.writeImage("sierpinski_gasket", uuid.toString(), image);
             result.add(new DataElement(uuid.toString(), "sierpinski_gasket"));
         }
+
+        LOGGER.info("SierpinskiGasket generation finished.");
+
         return result;
     }
 

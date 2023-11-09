@@ -1,9 +1,8 @@
 package de.fractalitylab.generators;
 
+import de.fractalitylab.FractalityLab;
 import de.fractalitylab.data.ImageWriter;
 import de.fractalitylab.data.DataElement;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -11,10 +10,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.logging.Logger;
 import java.util.stream.IntStream;
 
 public class JuliaGenerator implements ImageGenerator {
-    private static final Logger LOGGER = LogManager.getLogger(JuliaGenerator.class);
+    private static final Logger LOGGER = Logger.getLogger(JuliaGenerator.class.getName());
+
     ThreadLocalRandom random = ThreadLocalRandom.current();
 
     @Override
@@ -23,7 +24,6 @@ public class JuliaGenerator implements ImageGenerator {
         IntStream.range(1, numberOfImages + 1).parallel().forEach(imageNumber -> {
             BufferedImage image;
             do {
-                LOGGER.info("Generating image " + imageNumber + "...");
                 image = generateSingleImage(width, height, maxIterations, imageNumber);
             } while (!isImageInteresting(image, 3, 10));
 
@@ -31,11 +31,11 @@ public class JuliaGenerator implements ImageGenerator {
             ImageWriter.writeImage("julia", uuid.toString(), image);
             result.add(new DataElement(uuid.toString(), "julia"));
         });
+        LOGGER.info("Julia generation finished.");
         return result;
     }
 
     private BufferedImage generateSingleImage(int width, int height, int maxIterations, int imageNumber) {
-        LOGGER.info("Generating image...");
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         ThreadLocalRandom random = ThreadLocalRandom.current();
 

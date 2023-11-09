@@ -12,6 +12,7 @@ FractalityLab is a powerful Java-based tool for generating datasets of fractal i
 ![alt text](https://hc-linux.eu/edux/0b69dff9-68fd-4ff2-bea4-810a452b71cc.png)
 ![alt text](https://hc-linux.eu/edux/2d483ca2-3579-428e-8dcc-3034208a801c.png)
 ![alt text](https://hc-linux.eu/edux/9b529a2f-5e63-4dd9-939c-12a09dec41e4.png)
+![alt text](https://hc-linux.eu/edux/e4c215af-3f02-4250-b1af-7d23b52dc15f.png)
 
 ### Download
 You can download a dataset of 1000 images (256x256) for each class generated with FractalityLab here
