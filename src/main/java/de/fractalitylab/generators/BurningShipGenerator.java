@@ -22,12 +22,7 @@ public class BurningShipGenerator implements ImageGenerator{
         List<DataElement> result = new ArrayList<>();
         IntStream.range(1, numberOfImages + 1).forEach(imageNumber -> {
             BufferedImage image;
-            do {
             image = generateSingleImage(width, height, maxIterations*10 );
-
-            } while (!checkBlackImage(image)); // Retry if the image is predominantly black
-
-
 
             UUID uuid = UUID.randomUUID();
             ImageWriter.writeImage("burningship", uuid.toString(), image);
@@ -89,22 +84,7 @@ public class BurningShipGenerator implements ImageGenerator{
         return image;
     }
 
-    // Add this method to your BurningShipGenerator class
-    private boolean checkBlackImage(BufferedImage image) {
-        int width = image.getWidth();
-        int height = image.getHeight();
-        int[] pixels = new int[width * height];
-        image.getRGB(0, 0, width, height, pixels, 0, width);
 
-        int blackPixelThreshold = (int) (width * height * 0.93);
-        long blackPixelCount = IntStream.of(pixels).parallel().filter(color -> color == Color.BLACK.getRGB()).count();
-
-        boolean isBlack = blackPixelCount < blackPixelThreshold;
-        if (!isBlack) {
-            LOGGER.info("Image is predominantly black. Retrying...");
-        }
-        return isBlack;
-    }
 
     private double[] rotatePoint(double x, double y, double angle) {
         double cosAngle = Math.cos(angle);

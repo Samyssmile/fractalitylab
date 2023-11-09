@@ -14,20 +14,36 @@ FractalityLab is a powerful Java-based tool for generating datasets of fractal i
 ![alt text](https://hc-linux.eu/edux/9b529a2f-5e63-4dd9-939c-12a09dec41e4.png)
 ![alt text](https://hc-linux.eu/edux/e4c215af-3f02-4250-b1af-7d23b52dc15f.png)
 
-### Download
-You can download a dataset of 1000 images (256x256) for each class generated with FractalityLab here
+### Downloads
+You can download a dataset of 60.000 images (256x256) (10.000 images for each class) generated with FractalityLab here
 [FractalityLab Dataset](https://hc-linux.eu/edux/fractalitylab-dataset.zip)
 
 ## Features
-- Multiple fractal generators including Mandelbrot, Julia, Burning Ship, and more.
+- Multiple fractal generators including Mandelbrot, Julia, Burning Ship, Newton, SierpinskiGasket and more.
 - Configurable image size and quantity.
 - .png Images with CSV output of generated fractal data.
+- Easy to use command line interface.
 
-## Installation
-Clone the repository and compile the source to get started:
+## Usage
 ```bash
-java de.fractalitylab.FractalityLab [number_of_images] [image_size]
+# Create 10000 Images fo each fractal class with 256 pixel size
+java -jar FractalityLab-1.0.jar 10000 256
 ```
+
+This command will create a folder dataset with images and a csv file containing the labels you need for training your machine learning model.
+```
+├───images.csv
+├───dataset
+    ├───class
+       ├───burningship
+       ├───julia
+       ├───mandelbrot
+       ├───newton
+       ├───sierpinski_gasket
+       └───tricorn
+```
+
+
 
 ## Contributing
 We welcome contributions. If you have suggestions or contributions, please fork the repository and submit a pull request.

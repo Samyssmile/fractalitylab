@@ -20,8 +20,8 @@ public class MandelbrotGenerator implements ImageGenerator {
     @Override
     public List<DataElement> generateImage(int width, int height, int maxIterations, int numberOfImages) {
         List<DataElement> result = new ArrayList<>();
-        int iterations = maxIterations * 100;
-        IntStream.range(1, numberOfImages + 1).forEach(imageNumber -> {
+        int iterations = maxIterations*10;
+        IntStream.range(1, numberOfImages + 1).parallel().forEach(imageNumber -> {
             BufferedImage image;
             image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
             double zoom = 1000.0 + random.nextDouble() * 10000.0;
