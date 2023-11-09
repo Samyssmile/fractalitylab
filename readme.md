@@ -17,6 +17,8 @@ FractalityLab is a powerful Java-based tool for generating datasets of fractal i
 ### Downloads
 You can download a dataset of 60.000 images (256x256) (10.000 images for each class) generated with FractalityLab here
 [FractalityLab Dataset](https://hc-linux.eu/edux/fractalitylab-dataset.zip)
+A dataset of 300 4k Images can be found here
+[4k FractalityLab Dataset](https://hc-linux.eu/edux/fractalitylab-dataset_4k.zip)
 
 ## Features
 - Multiple fractal generators including Mandelbrot, Julia, Burning Ship, Newton, SierpinskiGasket and more.
