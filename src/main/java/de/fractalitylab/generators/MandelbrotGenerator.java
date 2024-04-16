@@ -52,6 +52,8 @@ public class MandelbrotGenerator implements ImageGenerator {
                 isValid = containsFractal(finalImage);
             } while (!isValid);
 
+            image = rotateImage(image);
+
             UUID uuid = UUID.randomUUID();
             ImageWriter.writeImage("mandelbrot", uuid.toString(), image);
             result.add(new DataElement(uuid.toString(), "mandelbrot"));

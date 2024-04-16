@@ -56,6 +56,7 @@ public class NewtonFractalGenerator implements ImageGenerator {
         IntStream.range(1, numberOfImages + 1).parallel().forEach(imageNumber -> {
             BufferedImage image;
             image = generateImage(width, height, maxIterations * random.nextInt(1, 300));
+            image = rotateImage(image);
             UUID uuid = UUID.randomUUID();
             ImageWriter.writeImage("newton", uuid.toString(), image);
             result.add(new DataElement(uuid.toString(), "newton"));

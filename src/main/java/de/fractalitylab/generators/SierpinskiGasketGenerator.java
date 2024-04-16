@@ -37,6 +37,7 @@ public class SierpinskiGasketGenerator implements ImageGenerator {
             drawGasket(g, vertices, maxIterations);
 
             g.dispose();
+            image = rotateImage(image);
             UUID uuid = UUID.randomUUID();
             ImageWriter.writeImage("sierpinski_gasket", uuid.toString(), image);
             result.add(new DataElement(uuid.toString(), "sierpinski_gasket"));

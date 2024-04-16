@@ -24,6 +24,7 @@ public class JuliaGenerator implements ImageGenerator {
             BufferedImage image;
             image = generateSingleImage(width, height, maxIterations, imageNumber);
 
+            image = rotateImage(image);
             UUID uuid = UUID.randomUUID();
             ImageWriter.writeImage("julia", uuid.toString(), image);
             result.add(new DataElement(uuid.toString(), "julia"));

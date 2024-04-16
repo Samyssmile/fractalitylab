@@ -23,6 +23,7 @@ public class BurningShipGenerator implements ImageGenerator{
         IntStream.range(1, numberOfImages + 1).forEach(imageNumber -> {
             BufferedImage image;
             image = generateSingleImage(width, height, maxIterations*10 );
+            image = rotateImage(image);
 
             UUID uuid = UUID.randomUUID();
             ImageWriter.writeImage("burningship", uuid.toString(), image);

@@ -1,9 +1,12 @@
 package de.fractalitylab.generators;
 
-import de.fractalitylab.data.DataElement;
+import de.fractalitylab.FractalityLab;
 import de.fractalitylab.data.ImageWriter;
+import de.fractalitylab.data.DataElement;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,12 +32,13 @@ public class TricornGenerator implements ImageGenerator {
                     double zx = 3 * (x - width / 2 + offsetX * width) / (double) width;
                     double zy = 3 * (height / 2 - y + offsetY * height) / (double) height;
                     float brightness = computeTricorn(zx, zy, maxIterations);
-                    // Variieren Sie den Farbton leicht für jedes Bild
                     float hue = 0.95f + 10 * brightness + (float) i / numberOfImages;
                     int color = Color.HSBtoRGB(hue, 0.6f, brightness);
                     image.setRGB(x, y, color);
                 }
             }
+
+            image = rotateImage(image);
 
             UUID uuid = UUID.randomUUID();
             ImageWriter.writeImage("tricorn", uuid.toString(), image);
@@ -56,4 +60,6 @@ public class TricornGenerator implements ImageGenerator {
         }
         return iteration < maxIterations ? (float) iteration / maxIterations : 0;
     }
+
+
 }
