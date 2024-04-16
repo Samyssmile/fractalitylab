@@ -55,9 +55,10 @@ public class NewtonFractalGenerator implements ImageGenerator {
         List<DataElement> result = new ArrayList<>();
         IntStream.range(1, numberOfImages + 1).parallel().forEach(imageNumber -> {
             BufferedImage image;
-            image = generateImage(width, height, maxIterations*random.nextInt(1, 300));
+            image = generateImage(width, height, maxIterations * random.nextInt(1, 300));
             UUID uuid = UUID.randomUUID();
             ImageWriter.writeImage("newton", uuid.toString(), image);
+            result.add(new DataElement(uuid.toString(), "newton"));
         });
 
         LOGGER.info("Newton generation finished.");
@@ -116,7 +117,7 @@ public class NewtonFractalGenerator implements ImageGenerator {
         float[] colorWeights = new float[roots.length];
         for (int i = 0; i < roots.length; i++) {
             if (i == closestRootIndex) {
-                colorWeights[i] = 1.0f - (float)iterations / MAX_ITERATIONS;
+                colorWeights[i] = 1.0f - (float) iterations / MAX_ITERATIONS;
             } else {
                 colorWeights[i] = 0.0f;
             }
@@ -131,15 +132,14 @@ public class NewtonFractalGenerator implements ImageGenerator {
         }
 
         // Anpassung für mehr Helligkeit
-        float brightnessAdjustment = (float) (1.0f - ((float)minDistance / CONVERGENCE_THRESHOLD));
+        float brightnessAdjustment = (float) (1.0f - ((float) minDistance / CONVERGENCE_THRESHOLD));
         float colorAdjustment = 1.0f + brightnessAdjustment;
-        r = (int)(r * colorAdjustment*brightnessAdjustment) % 256;
-        g = (int)(g * colorAdjustment*brightnessAdjustment) % 256;
-        b = (int)(b * colorAdjustment*brightnessAdjustment) % 256;
+        r = (int) (r * colorAdjustment * brightnessAdjustment) % 256;
+        g = (int) (g * colorAdjustment * brightnessAdjustment) % 256;
+        b = (int) (b * colorAdjustment * brightnessAdjustment) % 256;
 
         return new Color(r, g, b).getRGB();
     }
-
 
 
     // Die Funktion f(z) für die Newton-Raphson-Iteration

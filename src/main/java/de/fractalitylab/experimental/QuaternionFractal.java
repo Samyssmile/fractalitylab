@@ -14,7 +14,6 @@ public class QuaternionFractal {
     public BufferedImage generateFractal() {
         BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 
-        // Schleife durch jeden Pixel im Bild
         for (int x = 0; x < WIDTH; x++) {
             for (int y = 0; y < HEIGHT; y++) {
                 double zx = 1.5 * (x - WIDTH / 2) / (0.5 * ZOOM * WIDTH);
@@ -33,11 +32,8 @@ public class QuaternionFractal {
         int i;
         for (i = 0; i < MAX_ITER; i++) {
             if (z.getNorm() > 2.0) break;
-            // Hier wird die komplexe Quaternion-Fraktal-Funktion auf z angewendet
-            // Dies ist ein Platzhalter für die eigentliche Fraktalberechnung
             z = z.multiply(z).add(c);
         }
-        // Rückgabe eines Helligkeitswerts basierend auf der Anzahl der Iterationen
         return (float)i / MAX_ITER;
     }
 

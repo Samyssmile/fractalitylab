@@ -4,7 +4,7 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 *.csv
-dataset/
+../edux/lib/src/test/resources/fractality/small_test/dataset/
 
 /.idea
 

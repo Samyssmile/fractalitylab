@@ -1,8 +1,7 @@
 package de.fractalitylab.generators;
 
-import de.fractalitylab.FractalityLab;
-import de.fractalitylab.data.ImageWriter;
 import de.fractalitylab.data.DataElement;
+import de.fractalitylab.data.ImageWriter;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -19,13 +18,11 @@ public class JuliaGenerator implements ImageGenerator {
     ThreadLocalRandom random = ThreadLocalRandom.current();
 
     @Override
-    public List<DataElement>  generateImage(int width, int height, int maxIterations, int numberOfImages) {
+    public List<DataElement> generateImage(int width, int height, int maxIterations, int numberOfImages) {
         List<DataElement> result = new ArrayList<>();
         IntStream.range(1, numberOfImages + 1).parallel().forEach(imageNumber -> {
             BufferedImage image;
-            do {
-                image = generateSingleImage(width, height, maxIterations, imageNumber);
-            } while (!isImageInteresting(image, 3, 10));
+            image = generateSingleImage(width, height, maxIterations, imageNumber);
 
             UUID uuid = UUID.randomUUID();
             ImageWriter.writeImage("julia", uuid.toString(), image);
@@ -67,26 +64,5 @@ public class JuliaGenerator implements ImageGenerator {
         });
         return image;
     }
-
-
-    private boolean isImageInteresting(BufferedImage image, int requiredColorVariety, int segments) {
-        int width = image.getWidth();
-        int height = image.getHeight();
-        int segmentWidth = width / segments;
-        int segmentHeight = height / segments;
-
-/*        boolean result = IntStream.range(0, segments).parallel().allMatch(i ->
-                IntStream.range(0, segments).parallel().allMatch(j ->
-                        isSegmentVaried(image, i * segmentWidth, j * segmentHeight, segmentWidth, segmentHeight, requiredColorVariety)
-                )
-        );*/
-        boolean result = true;
-        if (!result) {
-            LOGGER.info("Bad image, retrying...");
-            return false;
-        }
-        return result;
-    }
-
 
 }

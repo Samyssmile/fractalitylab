@@ -1,8 +1,7 @@
 package de.fractalitylab.generators;
 
-import de.fractalitylab.FractalityLab;
-import de.fractalitylab.data.ImageWriter;
 import de.fractalitylab.data.DataElement;
+import de.fractalitylab.data.ImageWriter;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

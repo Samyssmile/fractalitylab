@@ -63,20 +63,16 @@ public class BurningShipGenerator implements ImageGenerator{
                 float hueShift = random.nextFloat();
 
                 if (iter < maxIterations) {
-                    // Glättungsfunktion für einen sanfteren Farbverlauf
                     double mu = iter - Math.log(Math.log(zx*zx + zy*zy)) / Math.log(2);
                     mu = Math.max(mu, 0);
 
-                    // Farbverlauf von Orange zu Schwarz
                     float hue = 0.05f + 0.95f * (float)(maxIterations - mu) / maxIterations; // Farbton von Gelb-Orange zu Rot
                     float saturation = 1.0f; // volle Sättigung für lebendige Farben
                     float brightness = (float)Math.sqrt(mu / maxIterations); // Helligkeit abhängig von der Nähe zu maxIterations
 
-                    // Umsetzung des Farbwerts in einen RGB-Wert
                     int color = Color.HSBtoRGB(hue, saturation, brightness);
                     image.setRGB(x, y, color);
                 } else {
-                    // Die Punkte, die gegen unendlich tendieren, werden Schwarz
                     image.setRGB(x, y, Color.BLACK.getRGB());
                 }
             }
