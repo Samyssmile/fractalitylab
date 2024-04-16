@@ -20,7 +20,7 @@ public class MandelbrotGenerator implements ImageGenerator {
     @Override
     public List<DataElement> generateImage(int width, int height, int maxIterations, int numberOfImages) {
         List<DataElement> result = new ArrayList<>();
-        int iterations = maxIterations * 10;
+        int iterations = maxIterations;
 
         IntStream.range(1, numberOfImages + 1).parallel().forEach(imageNumber -> {
             boolean isValid;

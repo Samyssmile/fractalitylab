@@ -14,7 +14,7 @@ public class FractalityLab {
     private static final Logger LOGGER = Logger.getLogger(FractalityLab.class.getName());
     private static final int DEFAULT_NUMBER_OF_IMAGES = 100;
     private static final int DEFAULT_SIZE = 256;
-    private static final int MAX_ITERATIONS = 5;
+    private static final int MAX_ITERATIONS = 18;
     private static Configuration config;
 
     public static void main(String[] args) {
@@ -33,7 +33,8 @@ public class FractalityLab {
 
         LOGGER.info("All images generated.");
 
-        new CSVWriter().writeToCSV("images.csv", allDataElements);
+        String folder = "dataset";
+        new CSVWriter().writeToCSV(folder + "/images.csv", allDataElements);
 
         LOGGER.info("All images generated and CSV file created.");
     }
