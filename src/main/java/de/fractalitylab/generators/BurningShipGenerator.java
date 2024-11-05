@@ -18,11 +18,13 @@ public class BurningShipGenerator implements ImageGenerator{
     private final ThreadLocalRandom random = ThreadLocalRandom.current();
 
     @Override
-    public List<DataElement> generateImage(int width, int height, int maxIterations, int numberOfImages) {
+    public List<DataElement> generateImage(int width, int height, int maxIterations, int numberOfImages, int quality) {
         List<DataElement> result = new ArrayList<>();
         IntStream.range(1, numberOfImages + 1).forEach(imageNumber -> {
             BufferedImage image;
             image = generateSingleImage(width, height, maxIterations*10 );
+
+            image = applyQualityAdjustments(image, quality);
             image = rotateImage(image);
 
             UUID uuid = UUID.randomUUID();

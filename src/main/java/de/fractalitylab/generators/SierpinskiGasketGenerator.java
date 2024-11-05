@@ -17,14 +17,14 @@ public class SierpinskiGasketGenerator implements ImageGenerator {
     private static final Logger LOGGER = Logger.getLogger(SierpinskiGasketGenerator.class.getName());
 
     @Override
-    public List<DataElement> generateImage(int width, int height, int maxIterations, int numberOfImages) {
+    public List<DataElement> generateImage(int width, int height, int maxIterations, int numberOfImages, int quality) {
         final int iterations = maxIterations * 10; // You can adjust this multiplier for more detailed fractals
         List<DataElement> result = new ArrayList<>();
         IntStream.range(0, numberOfImages).parallel().forEach(imageNumber -> {
             double zoomFactor = ThreadLocalRandom.current().nextDouble(0.5, 1.5);
             BufferedImage image = generateSingleImage(width, height, zoomFactor, iterations);
             image = rotateImage(image);
-
+            image = applyQualityAdjustments(image, quality);
             UUID uuid = UUID.randomUUID();
             ImageWriter.writeImage("sierpinski", uuid.toString(), image);
             result.add(new DataElement(uuid.toString(), "sierpinski"));

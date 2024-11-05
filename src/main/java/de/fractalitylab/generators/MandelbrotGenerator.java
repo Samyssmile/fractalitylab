@@ -18,19 +18,22 @@ public class MandelbrotGenerator implements ImageGenerator {
     ThreadLocalRandom random = ThreadLocalRandom.current();
 
     @Override
-    public List<DataElement> generateImage(int width, int height, int maxIterations, int numberOfImages) {
+    public List<DataElement> generateImage(int width, int height, int maxIterations, int numberOfImages, int quality) {
         List<DataElement> result = new ArrayList<>();
-        int iterations = maxIterations;
+
+        int minIterations = 10; // Minimale Anzahl von Iterationen
 
         IntStream.range(1, numberOfImages + 1).parallel().forEach(imageNumber -> {
             boolean isValid;
             BufferedImage image;
             do {
                 image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+                int iterations = (int) (minIterations + (maxIterations - minIterations) * (quality / 100.0));
                 double zoom = 1000.0 + random.nextDouble() * 10.0;
                 double moveX = -0.7 + random.nextDouble() * 0.7;
                 double moveY = random.nextDouble() * 0.7;
                 BufferedImage finalImage = image;
+                int finalIterations = iterations;
                 IntStream.range(0, height).parallel().forEach(y -> {
                     for (int x = 0; x < width; x++) {
                         double zx = (x - width / 2.0) / zoom + moveX;
@@ -39,19 +42,21 @@ public class MandelbrotGenerator implements ImageGenerator {
                         double cY = zy;
                         int iter = 0;
                         double tmp;
-                        while ((zx * zx + zy * zy < 4) && (iter < iterations)) {
+                        while ((zx * zx + zy * zy < 4) && (iter < finalIterations)) {
                             tmp = zx * zx - zy * zy + cX;
                             zy = 2.0 * zx * zy + cY;
                             zx = tmp;
                             iter++;
                         }
-                        int color = Color.HSBtoRGB((float) iter / iterations + (iter % 2) * 0.5f, 1, iter < iterations ? 1 : 0);
+                        int color = Color.HSBtoRGB((float) iter / finalIterations + (iter % 2) * 0.5f, 1, iter < finalIterations ? 1 : 0);
                         finalImage.setRGB(x, y, color);
                     }
                 });
                 isValid = containsFractal(finalImage);
             } while (!isValid);
 
+
+            image = applyQualityAdjustments(image, quality);
             image = rotateImage(image);
 
             UUID uuid = UUID.randomUUID();
@@ -59,7 +64,7 @@ public class MandelbrotGenerator implements ImageGenerator {
             result.add(new DataElement(uuid.toString(), "mandelbrot"));
         });
 
-        LOGGER.info("Mandelbrot generation finished.");
+        LOGGER.info("Mandelbrot-Generierung abgeschlossen.");
         return result;
     }
 

@@ -3,6 +3,12 @@
 ## Overview
 FractalityLab is a powerful Java-based tool for generating datasets of fractal images, suitable for machine learning applications. This utility is part of the `edux` machine learning library suite and is tailored for creating intricate datasets that can be used to train and improve machine learning models.
 
+## Usage
+```bash
+# Create 100 Images fo each fractal class with 256x256 pixel size. Quality 76 (100 is perfect, 0 is worst)
+java -jar FractalityLab-1.2.jar --number 100 --size 256 --quality 76
+```
+
 ### Check out the `edux` library here:
 [EDUX - Java Machine Learning Library](https://github.com/Samyssmile/edux)
 
@@ -27,11 +33,6 @@ You can download pre generated datasets from the following links:
 - .png Images with CSV output of generated fractal data.
 - Easy to use command line interface.
 
-## Usage
-```bash
-# Create 10000 Images fo each fractal class with 256 pixel size
-java -jar FractalityLab-1.0.jar 10000 256
-```
 
 This command will create a folder dataset with images and a csv file containing the labels you need for training your machine learning model.
 ```

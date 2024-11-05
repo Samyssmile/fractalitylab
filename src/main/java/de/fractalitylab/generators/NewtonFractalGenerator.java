@@ -51,11 +51,12 @@ public class NewtonFractalGenerator implements ImageGenerator {
     }
 
     @Override
-    public List<DataElement> generateImage(int width, int height, int maxIterations, int numberOfImages) {
+    public List<DataElement> generateImage(int width, int height, int maxIterations, int numberOfImages, int quality) {
         List<DataElement> result = new ArrayList<>();
         IntStream.range(1, numberOfImages + 1).parallel().forEach(imageNumber -> {
             BufferedImage image;
             image = generateImage(width, height, maxIterations * random.nextInt(1, 300));
+            image = applyQualityAdjustments(image, quality);
             image = rotateImage(image);
             UUID uuid = UUID.randomUUID();
             ImageWriter.writeImage("newton", uuid.toString(), image);
@@ -154,6 +155,7 @@ public class NewtonFractalGenerator implements ImageGenerator {
         // Die Ableitung von z^3 - 1 ist 3z^2
         return z.pow(2).multiply(new Complex(3, 0));
     }
+
 
     // Einfache komplexe Zahl Klasse
     class Complex {

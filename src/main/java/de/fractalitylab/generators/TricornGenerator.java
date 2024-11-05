@@ -19,7 +19,7 @@ public class TricornGenerator implements ImageGenerator {
     private Random random = new Random();
 
     @Override
-    public List<DataElement> generateImage(int width, int height, int maxIterations, int numberOfImages) {
+    public List<DataElement> generateImage(int width, int height, int maxIterations, int numberOfImages, int quality) {
         List<DataElement> dataElements = new ArrayList<>();
         for (int i = 0; i < numberOfImages; i++) {
             double offsetX = (random.nextDouble() - 0.5) * 0.5;
@@ -39,7 +39,7 @@ public class TricornGenerator implements ImageGenerator {
             }
 
             image = rotateImage(image);
-
+            image = applyQualityAdjustments(image, quality);
             UUID uuid = UUID.randomUUID();
             ImageWriter.writeImage("tricorn", uuid.toString(), image);
             dataElements.add(new DataElement(uuid.toString(), "tricorn"));

@@ -18,12 +18,12 @@ public class JuliaGenerator implements ImageGenerator {
     ThreadLocalRandom random = ThreadLocalRandom.current();
 
     @Override
-    public List<DataElement> generateImage(int width, int height, int maxIterations, int numberOfImages) {
+    public List<DataElement> generateImage(int width, int height, int maxIterations, int numberOfImages, int quality) {
         List<DataElement> result = new ArrayList<>();
         IntStream.range(1, numberOfImages + 1).parallel().forEach(imageNumber -> {
             BufferedImage image;
             image = generateSingleImage(width, height, maxIterations, imageNumber);
-
+            image = applyQualityAdjustments(image, quality);
             image = rotateImage(image);
             UUID uuid = UUID.randomUUID();
             ImageWriter.writeImage("julia", uuid.toString(), image);
