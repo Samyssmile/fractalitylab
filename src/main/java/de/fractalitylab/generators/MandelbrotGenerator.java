@@ -6,6 +6,7 @@ import de.fractalitylab.data.ImageWriter;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
@@ -19,8 +20,7 @@ public class MandelbrotGenerator implements ImageGenerator {
 
     @Override
     public List<DataElement> generateImage(int width, int height, int maxIterations, int numberOfImages, int quality) {
-        List<DataElement> result = new ArrayList<>();
-
+        List<DataElement> result = Collections.synchronizedList(new ArrayList<>());
         int minIterations = 10; // Minimale Anzahl von Iterationen
 
         IntStream.range(1, numberOfImages + 1).parallel().forEach(imageNumber -> {
@@ -64,7 +64,7 @@ public class MandelbrotGenerator implements ImageGenerator {
             result.add(new DataElement(uuid.toString(), "mandelbrot"));
         });
 
-        LOGGER.info("Mandelbrot-Generierung abgeschlossen.");
+        LOGGER.info(result.size()+" Mandelbrot-Generierung abgeschlossen.");
         return result;
     }
 

@@ -6,6 +6,7 @@ import de.fractalitylab.data.ImageWriter;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
@@ -52,7 +53,7 @@ public class NewtonFractalGenerator implements ImageGenerator {
 
     @Override
     public List<DataElement> generateImage(int width, int height, int maxIterations, int numberOfImages, int quality) {
-        List<DataElement> result = new ArrayList<>();
+        List<DataElement> result = Collections.synchronizedList(new ArrayList<>());
         IntStream.range(1, numberOfImages + 1).parallel().forEach(imageNumber -> {
             BufferedImage image;
             image = generateImage(width, height, maxIterations * random.nextInt(1, 300));
@@ -63,7 +64,7 @@ public class NewtonFractalGenerator implements ImageGenerator {
             result.add(new DataElement(uuid.toString(), "newton"));
         });
 
-        LOGGER.info("Newton generation finished.");
+        LOGGER.info(result.size()+ " Newton generation finished.");
         return result;
     }
 

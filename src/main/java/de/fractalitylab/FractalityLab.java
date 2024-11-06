@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public class FractalityLab {
 
     private static final Logger LOGGER = Logger.getLogger(FractalityLab.class.getName());
-    private static final int DEFAULT_NUMBER_OF_IMAGES = 20;
+    private static final int DEFAULT_NUMBER_OF_IMAGES = 10000;
     private static final int DEFAULT_SIZE = 256;
     private static final int DEFAULT_MAX_ITERATIONS = 18;
     private static final int DEFAULT_QUALITY = 80;

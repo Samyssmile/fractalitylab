@@ -7,6 +7,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
@@ -19,7 +20,7 @@ public class SierpinskiGasketGenerator implements ImageGenerator {
     @Override
     public List<DataElement> generateImage(int width, int height, int maxIterations, int numberOfImages, int quality) {
         final int iterations = maxIterations * 10; // You can adjust this multiplier for more detailed fractals
-        List<DataElement> result = new ArrayList<>();
+        List<DataElement> result = Collections.synchronizedList(new ArrayList<>());
         IntStream.range(0, numberOfImages).parallel().forEach(imageNumber -> {
             double zoomFactor = ThreadLocalRandom.current().nextDouble(0.5, 1.5);
             BufferedImage image = generateSingleImage(width, height, zoomFactor, iterations);
@@ -29,7 +30,7 @@ public class SierpinskiGasketGenerator implements ImageGenerator {
             ImageWriter.writeImage("sierpinski", uuid.toString(), image);
             result.add(new DataElement(uuid.toString(), "sierpinski"));
         });
-        LOGGER.info("Sierpinski Gasket generation finished.");
+        LOGGER.info(result.size()+ " Sierpinski Gasket generation finished.");
         return result;
     }
 

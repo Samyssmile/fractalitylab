@@ -4,6 +4,7 @@ import de.fractalitylab.data.ImageWriter;
 import de.fractalitylab.data.DataElement;
 
 import java.awt.*;
+import java.util.Collections;
 import java.util.List;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ public class BurningShipGenerator implements ImageGenerator{
 
     @Override
     public List<DataElement> generateImage(int width, int height, int maxIterations, int numberOfImages, int quality) {
-        List<DataElement> result = new ArrayList<>();
+        List<DataElement> result = Collections.synchronizedList(new ArrayList<>());
         IntStream.range(1, numberOfImages + 1).forEach(imageNumber -> {
             BufferedImage image;
             image = generateSingleImage(width, height, maxIterations*10 );
@@ -31,7 +32,7 @@ public class BurningShipGenerator implements ImageGenerator{
             ImageWriter.writeImage("burningship", uuid.toString(), image);
             result.add(new DataElement(uuid.toString(), "burningship"));
         });
-        LOGGER.info("BurningShip generation finished.");
+        LOGGER.info(result.size()+" BurningShip generation finished.");
         return result;
     }
 

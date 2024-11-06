@@ -9,6 +9,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -20,7 +21,7 @@ public class TricornGenerator implements ImageGenerator {
 
     @Override
     public List<DataElement> generateImage(int width, int height, int maxIterations, int numberOfImages, int quality) {
-        List<DataElement> dataElements = new ArrayList<>();
+        List<DataElement> dataElements = Collections.synchronizedList(new ArrayList<>());
         for (int i = 0; i < numberOfImages; i++) {
             double offsetX = (random.nextDouble() - 0.5) * 0.5;
             double offsetY = (random.nextDouble() - 0.5) * 0.5;
@@ -44,7 +45,7 @@ public class TricornGenerator implements ImageGenerator {
             ImageWriter.writeImage("tricorn", uuid.toString(), image);
             dataElements.add(new DataElement(uuid.toString(), "tricorn"));
         }
-        LOGGER.info("Tricorn generation finished.");
+        LOGGER.info(dataElements.size()+ " Tricorn generation finished.");
         return dataElements;
     }
 

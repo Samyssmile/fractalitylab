@@ -6,7 +6,7 @@ FractalityLab is a powerful Java-based tool for generating datasets of fractal i
 ## Usage
 ```bash
 # Create 100 Images fo each fractal class with 256x256 pixel size. Quality 76 (100 is perfect, 0 is worst)
-java -jar FractalityLab-1.2.jar --number 100 --size 256 --quality 76
+java -jar FractalityLab-1.2.jar --number 100 --size 256 --quality 74
 ```
 
 ### Check out the `edux` library here:

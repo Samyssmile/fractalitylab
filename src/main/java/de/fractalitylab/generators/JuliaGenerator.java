@@ -6,6 +6,7 @@ import de.fractalitylab.data.ImageWriter;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
@@ -19,7 +20,7 @@ public class JuliaGenerator implements ImageGenerator {
 
     @Override
     public List<DataElement> generateImage(int width, int height, int maxIterations, int numberOfImages, int quality) {
-        List<DataElement> result = new ArrayList<>();
+        List<DataElement> result = Collections.synchronizedList(new ArrayList<>());
         IntStream.range(1, numberOfImages + 1).parallel().forEach(imageNumber -> {
             BufferedImage image;
             image = generateSingleImage(width, height, maxIterations, imageNumber);
@@ -29,7 +30,7 @@ public class JuliaGenerator implements ImageGenerator {
             ImageWriter.writeImage("julia", uuid.toString(), image);
             result.add(new DataElement(uuid.toString(), "julia"));
         });
-        LOGGER.info("Julia generation finished.");
+        LOGGER.info(result.size()+" Julia generation finished.");
         return result;
     }
 
