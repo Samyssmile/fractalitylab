@@ -14,18 +14,18 @@ import java.util.concurrent.ThreadLocalRandom;
 public interface ImageGenerator {
     ThreadLocalRandom random = ThreadLocalRandom.current();
 
-    public abstract List<DataElement> generateImage(int width, int height, int maxIterations, int numberOfImages, int quality);
+    public abstract List<DataElement> generateImage(int width, int height, int maxIterations, int numberOfImages, int quality, boolean isTrain);
 
     default BufferedImage applyQualityAdjustments(BufferedImage image, int quality) {
         // Stärkere Unschärfe basierend auf der Qualität anwenden
-        float blurRadius = (100 - quality) / 1.0f;
+        float blurRadius = (quality) / 1.0f;
         if (blurRadius > 0) {
             image = applyGaussianBlur(image, blurRadius);
         }
 
         // Rauschen hinzufügen
         if (quality < 100) {
-            image = addNoise(image, (100 - quality) / 10.0f);
+            image = addNoise(image, (100 - quality) / 5.0f);
         }
 
         // Weitere Qualitätsanpassungen können hier hinzugefügt werden

@@ -19,17 +19,18 @@ public class BurningShipGenerator implements ImageGenerator{
     private final ThreadLocalRandom random = ThreadLocalRandom.current();
 
     @Override
-    public List<DataElement> generateImage(int width, int height, int maxIterations, int numberOfImages, int quality) {
+    public List<DataElement> generateImage(int width, int height, int maxIterations, int numberOfImages, int quality, boolean isTrain) {
         List<DataElement> result = Collections.synchronizedList(new ArrayList<>());
         IntStream.range(1, numberOfImages + 1).forEach(imageNumber -> {
             BufferedImage image;
             image = generateSingleImage(width, height, maxIterations*10 );
 
-            image = applyQualityAdjustments(image, quality);
+            int adjustedQuality = Math.min(quality+20, 100);
+            image = applyQualityAdjustments(image, adjustedQuality);
             image = rotateImage(image);
 
             UUID uuid = UUID.randomUUID();
-            ImageWriter.writeImage("burningship", uuid.toString(), image);
+            ImageWriter.writeImage("burningship", uuid.toString(), image, isTrain);
             result.add(new DataElement(uuid.toString(), "burningship"));
         });
         LOGGER.info(result.size()+" BurningShip generation finished.");

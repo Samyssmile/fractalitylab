@@ -7,13 +7,21 @@ import java.io.IOException;
 
 public class ImageWriter {
 
-    public static void writeImage(String className, String fileName, BufferedImage image){
+    public static void writeImage(String className, String fileName, BufferedImage image, boolean isTrainImage){
         try {
-            File targetFolder = new File("dataset"+File.separator+"class"+File.separator+className);
-            if(!targetFolder.exists()){
-                targetFolder.mkdirs();
+            File targetFolder;
+            if(isTrainImage){
+                targetFolder = new File("dataset"+File.separator+"train"+File.separator+className);
+                if(!targetFolder.exists()){
+                    targetFolder.mkdirs();
+                }
+            } else {
+                targetFolder = new File("dataset"+File.separator+"test"+File.separator+className);
+                if(!targetFolder.exists()){
+                    targetFolder.mkdirs();
+                }
             }
-            ImageIO.write(image, "png", new File("dataset"+File.separator+"class"+File.separator+className +File.separator+ fileName + ".png"));
+            ImageIO.write(image, "png", new File(targetFolder + File.separator + fileName + ".png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
