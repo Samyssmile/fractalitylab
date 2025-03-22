@@ -6,7 +6,7 @@ FractalityLab is a powerful Java-based tool for generating datasets of fractal i
 ## Usage
 ```bash
 # Create 100 Images fo each fractal class with 256x256 pixel size. Quality 76 (100 is perfect, 0 is worst), trainTestRatio 0.80 means, 80% of the images will be used for training and 20% for testing.
-java -jar FractalityLab-1.2.jar --number 100 --size 256 --quality 74 --trainTestRatio 0.80 
+java -jar FractalityLab-1.3.jar --number 100 --size 256 --quality 74 --trainTestRatio 0.80 
 ```
 
 ### Check out the `edux` library here:
