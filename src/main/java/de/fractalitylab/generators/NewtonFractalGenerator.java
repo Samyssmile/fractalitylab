@@ -52,7 +52,7 @@ public class NewtonFractalGenerator implements ImageGenerator {
     }
 
     @Override
-    public List<DataElement> generateImage(int width, int height, int maxIterations, int numberOfImages, int quality) {
+    public List<DataElement> generateImage(int width, int height, int maxIterations, int numberOfImages, int quality, boolean isTrain) {
         List<DataElement> result = Collections.synchronizedList(new ArrayList<>());
         IntStream.range(1, numberOfImages + 1).parallel().forEach(imageNumber -> {
             BufferedImage image;
@@ -60,7 +60,7 @@ public class NewtonFractalGenerator implements ImageGenerator {
             image = applyQualityAdjustments(image, quality);
             image = rotateImage(image);
             UUID uuid = UUID.randomUUID();
-            ImageWriter.writeImage("newton", uuid.toString(), image);
+            ImageWriter.writeImage("newton", uuid.toString(), image, isTrain);
             result.add(new DataElement(uuid.toString(), "newton"));
         });
 

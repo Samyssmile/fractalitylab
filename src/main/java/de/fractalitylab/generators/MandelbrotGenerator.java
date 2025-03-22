@@ -19,7 +19,7 @@ public class MandelbrotGenerator implements ImageGenerator {
     ThreadLocalRandom random = ThreadLocalRandom.current();
 
     @Override
-    public List<DataElement> generateImage(int width, int height, int maxIterations, int numberOfImages, int quality) {
+    public List<DataElement> generateImage(int width, int height, int maxIterations, int numberOfImages, int quality, boolean isTrain) {
         List<DataElement> result = Collections.synchronizedList(new ArrayList<>());
         int minIterations = 10; // Minimale Anzahl von Iterationen
 
@@ -60,7 +60,7 @@ public class MandelbrotGenerator implements ImageGenerator {
             image = rotateImage(image);
 
             UUID uuid = UUID.randomUUID();
-            ImageWriter.writeImage("mandelbrot", uuid.toString(), image);
+            ImageWriter.writeImage("mandelbrot", uuid.toString(), image, isTrain);
             result.add(new DataElement(uuid.toString(), "mandelbrot"));
         });
 

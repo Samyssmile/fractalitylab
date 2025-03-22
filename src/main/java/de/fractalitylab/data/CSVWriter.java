@@ -6,8 +6,12 @@ import java.util.List;
 
 public class CSVWriter {
 
-    public void writeToCSV(String fileName, List<DataElement> dataElements) {
-        try (FileWriter csvWriter = new FileWriter(fileName)) {
+    public void writeToCSV(String folderPath, String fileName, List<DataElement> dataElements) {
+        if (!new java.io.File(folderPath).exists()) {
+            new java.io.File(folderPath).mkdirs();
+        }
+        String fileNameWithPath = folderPath + "/" + fileName;
+        try (FileWriter csvWriter = new FileWriter(fileNameWithPath)) {
             csvWriter.append("image,label\n");
 
             for (DataElement element : dataElements) {
