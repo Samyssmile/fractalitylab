@@ -1,205 +1,115 @@
 package de.fractalitylab.generators;
 
-import de.fractalitylab.data.DataElement;
-import de.fractalitylab.data.ImageWriter;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.logging.Logger;
 import java.util.stream.IntStream;
 
-public class NewtonFractalGenerator implements ImageGenerator {
-    private static final Logger LOGGER = Logger.getLogger(NewtonFractalGenerator.class.getName());
+/**
+ * Generates Newton fractal images using Newton's method for f(z) = z³ - 1.
+ * Colors indicate which root is converged to, brightness indicates convergence speed.
+ */
+public class NewtonFractalGenerator implements FractalGenerator {
 
-    ThreadLocalRandom random = ThreadLocalRandom.current();
+	private static final Complex[] ROOTS = {
+			new Complex(1, 0),
+			new Complex(-0.5, Math.sqrt(3) / 2),
+			new Complex(-0.5, -Math.sqrt(3) / 2)
+	};
 
+	private static final Color[] ROOT_COLORS = {
+			new Color(255, 0, 0),
+			new Color(0, 255, 0),
+			new Color(0, 0, 255)
+	};
 
-    public NewtonFractalGenerator() {
-    }
+	private static final double CONVERGENCE_THRESHOLD = 1e-6;
+	private static final double ZOOM_MIN = 1.0;
+	private static final double ZOOM_RANGE = 1000.0;
 
-    public BufferedImage generateImage(int width, int height, int quality) {
-        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g = image.createGraphics();
+	@Override
+	public BufferedImage generate(int width, int height, int maxIterations) {
+		ThreadLocalRandom random = ThreadLocalRandom.current();
+		int[] pixels = new int[width * height];
 
-        // Parameters for fractal generation
-        double zoom = 1 + 1000 * random.nextDouble(); // Random zoom
-        double rotation = 2 * Math.PI * random.nextDouble(); // Random rotation
+		double zoom = ZOOM_MIN + ZOOM_RANGE * random.nextDouble();
+		double rotation = 2 * Math.PI * random.nextDouble();
 
-        // Generate fractal (this is a placeholder for the actual fractal generation logic)
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                // Apply rotation and zoom to the current point
-                double nx = (x - width / 2) / zoom;
-                double ny = (y - height / 2) / zoom;
-                double angle = Math.atan2(ny, nx) + rotation;
-                double radius = Math.sqrt(nx * nx + ny * ny);
-                nx = radius * Math.cos(angle);
-                ny = radius * Math.sin(angle);
+		IntStream.range(0, height).forEach(y -> {
+			int rowOffset = y * width;
+			for (int x = 0; x < width; x++) {
+				double nx = (x - width / 2.0) / zoom;
+				double ny = (y - height / 2.0) / zoom;
+				double angle = Math.atan2(ny, nx) + rotation;
+				double radius = Math.sqrt(nx * nx + ny * ny);
+				nx = radius * Math.cos(angle);
+				ny = radius * Math.sin(angle);
 
-                // Determine the color of the point based on the Newton iteration (placeholder)
-                int color = getColorFromIteration(nx, ny, quality);
-                image.setRGB(x, y, color);
-            }
-        }
+				pixels[rowOffset + x] = colorForPoint(nx, ny, maxIterations);
+			}
+		});
+		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		image.setRGB(0, 0, width, height, pixels, 0, width);
+		return image;
+	}
 
-        g.dispose();
-        return image;
-    }
+	@Override
+	public String label() {
+		return "newton";
+	}
 
-    @Override
-    public List<DataElement> generateImage(int width, int height, int maxIterations, int numberOfImages, int quality, boolean isTrain) {
-        List<DataElement> result = Collections.synchronizedList(new ArrayList<>());
-        IntStream.range(1, numberOfImages + 1).parallel().forEach(imageNumber -> {
-            BufferedImage image;
-            image = generateImage(width, height, maxIterations * random.nextInt(1, 300));
-            image = applyQualityAdjustments(image, quality);
-            image = rotateImage(image);
-            UUID uuid = UUID.randomUUID();
-            ImageWriter.writeImage("newton", uuid.toString(), image, isTrain);
-            result.add(new DataElement(uuid.toString(), "newton"));
-        });
+	@Override
+	public FractalMetadata metadata() {
+		return new FractalMetadata("Newton Fractal",
+				"Fractal from Newton's method applied to z³ - 1",
+				18, 5, 200);
+	}
 
-        LOGGER.info(result.size()+ " Newton generation finished.");
-        return result;
-    }
+	private int colorForPoint(double x, double y, int maxIterations) {
+		Complex z = new Complex(x, y);
+		int iterations = 0;
+		double minDistance;
+		int closestRootIndex;
 
-    private int getColorFromIteration(double x, double y, int quality) {
-        final int MAX_ITERATIONS = quality;
-        final double CONVERGENCE_THRESHOLD = 1e-6;
+		do {
+			minDistance = Double.MAX_VALUE;
+			closestRootIndex = -1;
 
-        // Wurzeln des Polynoms z^3 - 1
-        Complex[] roots = {
-                new Complex(1, 0),
-                new Complex(-0.5, Math.sqrt(3) / 2),
-                new Complex(-0.5, -Math.sqrt(3) / 2)
-        };
-        // Farben für die Wurzeln
-        Color[] colors = {
-                new Color(255, 0, 0), // Rot
-                new Color(0, 255, 0), // Grün
-                new Color(0, 0, 255)  // Blau
-        };
+			// Newton step: z = z - f(z)/f'(z) where f(z) = z³ - 1
+			Complex z3 = z.pow(3).subtract(new Complex(1, 0));
+			Complex z2 = z.pow(2).multiply(new Complex(3, 0));
+			z = z.subtract(z3.divide(z2));
 
-        Complex z = new Complex(x, y);
-        Complex zPrev;
+			for (int i = 0; i < ROOTS.length; i++) {
+				double distance = z.subtract(ROOTS[i]).modulus();
+				if (distance < minDistance) {
+					minDistance = distance;
+					closestRootIndex = i;
+				}
+			}
 
-        int iterations = 0;
-        double minDistance = Double.MAX_VALUE;
-        int closestRootIndex = -1;
-        do {
-            zPrev = z;
-            z = z.subtract(f(z).divide(fPrime(z)));
+			if (minDistance < CONVERGENCE_THRESHOLD) {
+				break;
+			}
+			iterations++;
+		} while (iterations < maxIterations);
 
-            // Finde die nächste Wurzel und ihre Distanz
-            for (int i = 0; i < roots.length; i++) {
-                double distance = z.subtract(roots[i]).modulus();
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    closestRootIndex = i;
-                }
-            }
+		if (closestRootIndex == -1) {
+			return 0x000000;
+		}
 
-            if (minDistance < CONVERGENCE_THRESHOLD) {
-                break;
-            }
+		float weight = 1.0f - (float) iterations / maxIterations;
+		Color rootColor = ROOT_COLORS[closestRootIndex];
+		int r = (int) (weight * rootColor.getRed());
+		int g = (int) (weight * rootColor.getGreen());
+		int b = (int) (weight * rootColor.getBlue());
 
-            iterations++;
-        } while (iterations < MAX_ITERATIONS);
+		float brightnessAdj = (float) (1.0f - ((float) minDistance / CONVERGENCE_THRESHOLD));
+		float colorAdj = 1.0f + brightnessAdj;
+		r = Math.clamp((int) (r * colorAdj * brightnessAdj), 0, 255);
+		g = Math.clamp((int) (g * colorAdj * brightnessAdj), 0, 255);
+		b = Math.clamp((int) (b * colorAdj * brightnessAdj), 0, 255);
 
-        // Falls keine Konvergenz erreicht wurde, setzen wir die Farbe auf Schwarz.
-        if (closestRootIndex == -1) {
-            return 0x000000;
-        }
-
-        // Erzeuge Farbübergänge zwischen den Wurzeln
-        float[] colorWeights = new float[roots.length];
-        for (int i = 0; i < roots.length; i++) {
-            if (i == closestRootIndex) {
-                colorWeights[i] = 1.0f - (float) iterations / MAX_ITERATIONS;
-            } else {
-                colorWeights[i] = 0.0f;
-            }
-        }
-
-        // Berechne die neue Farbe
-        int r = 0, g = 0, b = 0;
-        for (int i = 0; i < roots.length; i++) {
-            r += colorWeights[i] * colors[i].getRed();
-            g += colorWeights[i] * colors[i].getGreen();
-            b += colorWeights[i] * colors[i].getBlue();
-        }
-
-        // Anpassung für mehr Helligkeit
-        float brightnessAdjustment = (float) (1.0f - ((float) minDistance / CONVERGENCE_THRESHOLD));
-        float colorAdjustment = 1.0f + brightnessAdjustment;
-        r = (int) (r * colorAdjustment * brightnessAdjustment) % 256;
-        g = (int) (g * colorAdjustment * brightnessAdjustment) % 256;
-        b = (int) (b * colorAdjustment * brightnessAdjustment) % 256;
-
-        return new Color(r, g, b).getRGB();
-    }
-
-
-    // Die Funktion f(z) für die Newton-Raphson-Iteration
-    private Complex f(Complex z) {
-        // Beispiel für ein Polynom: z^3 - 1
-        return z.pow(3).subtract(new Complex(1, 0));
-    }
-
-    // Die Ableitung von f(z)
-    private Complex fPrime(Complex z) {
-        // Die Ableitung von z^3 - 1 ist 3z^2
-        return z.pow(2).multiply(new Complex(3, 0));
-    }
-
-
-    // Einfache komplexe Zahl Klasse
-    class Complex {
-        private double re;
-        private double im;
-
-        public Complex(double real, double imaginary) {
-            this.re = real;
-            this.im = imaginary;
-        }
-
-        public Complex subtract(Complex b) {
-            return new Complex(this.re - b.re, this.im - b.im);
-        }
-
-        public Complex multiply(Complex b) {
-            return new Complex(this.re * b.re - this.im * b.im, this.re * b.im + this.im * b.re);
-        }
-
-        public Complex divide(Complex b) {
-            Complex conjugate = b.conjugate();
-            Complex numerator = this.multiply(conjugate);
-            double denominator = b.re * b.re + b.im * b.im;
-            return new Complex(numerator.re / denominator, numerator.im / denominator);
-        }
-
-        public Complex pow(int power) {
-            Complex result = this;
-            for (int i = 1; i < power; i++) {
-                result = result.multiply(this);
-            }
-            return result;
-        }
-
-        public double modulus() {
-            return Math.sqrt(re * re + im * im);
-        }
-
-        public Complex conjugate() {
-            return new Complex(re, -im);
-        }
-
-    }
-
-
+		return new Color(r, g, b).getRGB();
+	}
 }

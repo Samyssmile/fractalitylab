@@ -1,70 +1,62 @@
 package de.fractalitylab.generators;
 
-import de.fractalitylab.data.DataElement;
-import de.fractalitylab.data.ImageWriter;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.logging.Logger;
 import java.util.stream.IntStream;
 
-public class JuliaGenerator implements ImageGenerator {
-    private static final Logger LOGGER = Logger.getLogger(JuliaGenerator.class.getName());
+/**
+ * Generates Julia set fractal images with randomized c-parameter and hue shift.
+ */
+public class JuliaGenerator implements FractalGenerator {
 
-    ThreadLocalRandom random = ThreadLocalRandom.current();
+	private static final double C_RANGE = 2.0;
+	private static final double VIEW_SCALE = 3.0;
+	private static final double ESCAPE_RADIUS_SQUARED = 4.0;
 
-    @Override
-    public List<DataElement> generateImage(int width, int height, int maxIterations, int numberOfImages, int quality, boolean isTrain) {
-        List<DataElement> result = Collections.synchronizedList(new ArrayList<>());
-        IntStream.range(1, numberOfImages + 1).parallel().forEach(imageNumber -> {
-            BufferedImage image;
-            image = generateSingleImage(width, height, maxIterations, imageNumber);
-            image = applyQualityAdjustments(image, quality);
-            image = rotateImage(image);
-            UUID uuid = UUID.randomUUID();
-            ImageWriter.writeImage("julia", uuid.toString(), image, isTrain);
-            result.add(new DataElement(uuid.toString(), "julia"));
-        });
-        LOGGER.info(result.size()+" Julia generation finished.");
-        return result;
-    }
+	@Override
+	public BufferedImage generate(int width, int height, int maxIterations) {
+		ThreadLocalRandom random = ThreadLocalRandom.current();
+		int[] pixels = new int[width * height];
 
-    private BufferedImage generateSingleImage(int width, int height, int maxIterations, int imageNumber) {
-        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-        ThreadLocalRandom random = ThreadLocalRandom.current();
+		double cRe = random.nextDouble() * C_RANGE - 1;
+		double cIm = random.nextDouble() * C_RANGE - 1;
+		int hueShift = random.nextInt(maxIterations);
 
-        double cRe = random.nextDouble() * 2 - 1;
-        double cIm = random.nextDouble() * 2 - 1;
+		IntStream.range(0, height).forEach(y -> {
+			int rowOffset = y * width;
+			for (int x = 0; x < width; x++) {
+				double zx = (x - width / 2.0) * (VIEW_SCALE / width);
+				double zy = (y - height / 2.0) * (VIEW_SCALE / height);
+				int iter = 0;
 
-        IntStream.range(0, height).parallel().forEach(y -> {
-            for (int x = 0; x < width; x++) {
-                double zx = x * (2.0 / width) - 1.5;
-                double zy = y * (2.0 / height) - 1;
-                int iter = 0;
-                double tmp;
+				while (zx * zx + zy * zy < ESCAPE_RADIUS_SQUARED && iter < maxIterations) {
+					double tmp = zx * zx - zy * zy + cRe;
+					zy = 2.0 * zx * zy + cIm;
+					zx = tmp;
+					iter++;
+				}
 
-                while (zx * zx + zy * zy < 4 && iter < maxIterations) {
-                    tmp = zx * zx - zy * zy + cRe;
-                    zy = 2.0 * zx * zy + cIm;
-                    zx = tmp;
-                    iter++;
-                }
+				float hue = ((iter + hueShift) % maxIterations) / (float) maxIterations;
+				pixels[rowOffset + x] = (iter < maxIterations)
+						? Color.HSBtoRGB(hue, 1, iter % 2)
+						: Color.BLACK.getRGB();
+			}
+		});
+		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		image.setRGB(0, 0, width, height, pixels, 0, width);
+		return image;
+	}
 
-                float hue = ((iter + imageNumber) % maxIterations) / (float) maxIterations;
-                int color = (iter < maxIterations) ?
-                        Color.HSBtoRGB(hue, 1, iter % 2) :
-                        Color.BLACK.getRGB();
+	@Override
+	public String label() {
+		return "julia";
+	}
 
-
-                image.setRGB(x, y, color);
-            }
-        });
-        return image;
-    }
-
+	@Override
+	public FractalMetadata metadata() {
+		return new FractalMetadata("Julia Set",
+				"Escape-time fractal with a fixed complex c-parameter",
+				18, 5, 500);
+	}
 }
