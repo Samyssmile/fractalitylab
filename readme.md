@@ -259,13 +259,19 @@ de.fractalitylab
 
 ---
 
-## Pre-Generated Datasets
+## Pre-Generated Dataset
+
+A ready-to-use labeled dataset containing 60,000 fractal images across all 30 generator classes with an 80/20 train/test split.
+Ideal for image classification benchmarks, transfer learning experiments, and quick prototyping without running the generator yourself.
 
 | Dataset | Images | Resolution | Download |
 |---|---|---|---|
-| Small | 3,000 | 64 x 64 | [fractality-S.zip](https://hc-linux.eu/edux/fractality-S.zip) |
-| Medium | 3,000 | 512 x 512 | [fractality-L.zip](https://hc-linux.eu/edux/fractality-L.zip) |
-| Large | 30 | 4,000 x 4,000 | [fractality-XL.zip](https://hc-linux.eu/edux/fractality-XL.zip) |
+| fractality-2026 | 60,000 | 256 x 256 | [fractality-2026.zip](https://hc-linux.eu/edux/fractality-2026.zip) |
+
+Generated with:
+```bash
+java -jar FractalityLab-1.4.jar --numberPerClass 2000 --resolution 256 --quality 70
+```
 
 ---
 
